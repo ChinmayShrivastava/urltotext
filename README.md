@@ -19,7 +19,7 @@ pip install urltotext
 
 ```python
 from urltotext import ContentFinder
-cf = ContentFinder
+cf = ContentFinder()
 ```
 
 2. Scrape a url
