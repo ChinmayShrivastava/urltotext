@@ -76,7 +76,7 @@ def breakarticleintocomponents(article):
     return components
 
 class ContentFinder:
-    def __init__(self, url):
+    def __init__(self):
         self.options = Options()
         self.options.add_argument('--headless')
         self.driver = webdriver.Chrome(options=self.options)
@@ -86,13 +86,13 @@ class ContentFinder:
         self.driver.quit()
 
     def __str__(self):
-        return f"ContentFinder(url={self.url})"
+        return f"ContentFinder()"
     
     def __repr__(self):
-        return f"ContentFinder(url={self.url})"
+        return f"ContentFinder()"
     
     def __getitem__(self, url):
-        return self.content[url]
+        return self.content[url] if url in self.content else None
     
     def __setitem__(self, url, value):
         self.content[url] = value
@@ -111,10 +111,10 @@ class ContentFinder:
 
     def scrape_url(self, url):
         self.content[url] = {}
-        self.article, self.title, self.lang = contentfinder(self.url, self.driver)
-        self.content[url]["article"] = self.article
-        self.content[url]["title"] = self.title
-        self.content[url]["lang"] = self.lang
+        article, title, lang = contentfinder(url, self.driver)
+        self.content[url]["article"] = article
+        self.content[url]["title"] = title
+        self.content[url]["lang"] = lang
 
     def article_meta(self, url):
         if url not in self.content:
