@@ -18,10 +18,15 @@ def contentfinder(url, driver):
         if "javascript" in soup.find("html").get("class", []):
             driver.get(url)
             html = driver.page_source
+            print("Javascript detected")
         else:
-            html = requests.get(url).text
-    except Exception:
-        pass
+            html = requests.get(url, headers=headers)
+            print("Javascript not detected")
+    except Exception as e:
+        print("Error in fetching the page" + str(e))
+        return None, None, None
+
+    soup = BeautifulSoup(html.text, "html.parser")
 
     article = None
     t = soup.find('title')
@@ -52,6 +57,9 @@ def printarticle(article):
     # Define a list of valid tag names
     valid_tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li']
 
+    if article is None:
+        return None
+
     # Loop over all elements in the article content
     for element in article.find_all():
         # Check if the element is part of the readable article content and has a valid tag name
@@ -65,6 +73,9 @@ def breakarticleintocomponents(article):
 
     # Define a list of valid tag names
     valid_tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li']
+
+    if article is None:
+        return None
 
     # Loop over all elements in the article content
     for element in article.find_all():
@@ -149,10 +160,10 @@ class ContentFinder:
     def flush_data(self):
         self.content = {}
 
-# if __name__ == "__main__":
-#     options = Options()
-#     options.add_argument('--headless')
-#     driver = webdriver.Chrome(options=options)
-#     url = "https://en.wikipedia.org/wiki/Attalus_I"
-#     article, title, lang = contentfinder(url, driver)
-#     print(article.text)
+if __name__ == "__main__":
+    options = Options()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
+    url = "https://www.freecodecamp.org/news/web-scraping-in-javascript-with-puppeteer/"
+    article, title, lang = contentfinder(url, driver)
+    print(article.text)
